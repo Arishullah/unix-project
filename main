@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# sysreport.sh: Custom System Information Reporter
+
+# Define the report title and separator
+TITLE="--- Custom System Information Report ---"
+SEPARATOR="--------------------------------------"
+
+echo "$TITLE"
+
+# 1. Gather Kernel Version
+KERNEL_VERSION=$(uname -r)
+echo "Kernel Version:  $KERNEL_VERSION"
+
+# 2. Gather Hostname
+HOSTNAME=$(uname -n)
+echo "Hostname:        $HOSTNAME"
+
+# 3. Gather System Uptime
+# Use 'uptime -p' for a cleaner, human-readable format (e.g., "up 1 day, 5 hours")
+UPTIME=$(uptime -p | sed 's/^up //')
+echo "System Uptime:   $UPTIME"
+
+echo "$SEPARATOR"
+
+# 4. Gather Memory Information (Total and Free)
+# Use 'free -h' to get human-readable output
+MEM_INFO=$(free -h | awk '/^Mem:/ {print $2, $4}')
+TOTAL_MEM=$(echo $MEM_INFO | awk '{print $1}')
+FREE_MEM=$(echo $MEM_INFO | awk '{print $2}')
+echo "Total Memory:    $TOTAL_MEM"
+echo "Free Memory:     $FREE_MEM"
+
+echo "$SEPARATOR"
+
+# 5. Gather Root Disk Usage
+# Use 'df -h' and grep the root filesystem '/'
+DISK_USAGE=$(df -h / | awk 'NR==2 {print $5 " (" $2 " used of " $4 ")"}')
+echo "Root Disk Usage: $DISK_USAGE"
+
+echo "$SEPARATOR"
+
+# 6. Report End Time
+echo "Report Generated: $(date)"
+echo ""
